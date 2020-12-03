@@ -7,7 +7,7 @@ end
 
 function _deno_uninstall
     set completions_file = "$HOME/.config/fish/completions/deno.fish"
-    if test $completions_file
+    if test -f $completions_file
         rm $completions_file
     end
 end
