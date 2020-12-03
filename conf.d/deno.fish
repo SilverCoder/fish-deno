@@ -2,26 +2,34 @@ set -x DENO_INSTALL "$HOME/.deno"
 set -x PATH $PATH "$DENO_INSTALL/bin"
 
 function _deno_install
-    curl -fsSL https://deno.land/x/install/install.sh | sh
+    curl -fsSL "https://deno.land/x/install/install.sh" | sh
 end
 
-function _deno_uninstall --on-event deno_uninstall
-    if test "$HOME/.config/fish/completions/deno.fish"
-        rm "$HOME/.config/fish/completions/deno.fish"
+function _deno_uninstall
+    set completions_file = "$HOME/.config/fish/completions/deno.fish"
+    if test $completions_file
+        rm $completions_file
     end
 end
 
-function _deno_update_completions
+function _deno_completions
     deno completions fish >"$HOME/.config/fish/completions/deno.fish"
 end
 
-function _post_deno_upgrade --on-event fish_postexec
-    if string match -qr '^deno upgrade$' $argv
-        _deno_update_completions
+function _on_deno_install --on-event deno_install
+    if not test -f "$DENO_INSTALL/bin/deno"
+        _deno_install
     end
+
+    _deno_completions
 end
 
-if not test -f "$DENO_INSTALL/bin/deno"
-    _deno_install
-    _deno_update_completions
+function _on_deno_uninstall --on-event deno_uninstall
+    _deno_uninstall
+end
+
+function _on_postexec_deno_upgrade --on-event fish_postexec
+    if string match -qr '^deno upgrade$' $argv
+        _deno_completions
+    end
 end
