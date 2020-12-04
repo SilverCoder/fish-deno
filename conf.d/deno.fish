@@ -1,14 +1,12 @@
 set -x DENO_INSTALL "$HOME/.deno"
 set -x PATH $PATH "$DENO_INSTALL/bin"
 
-set DENO_COMPLETIONS_FILE "$HOME/.config/fish/completions/deno.fish"
-
 function _deno_install
     curl -fsSL "https://deno.land/x/install/install.sh" | sh
 end
 
 function _deno_completions
-    deno completions fish >"$DENO_COMPLETIONS_FILE"
+    deno completions fish >"$HOME/.config/fish/completions/deno.fish"
 end
 
 function _on_deno_install --on-event deno_install
